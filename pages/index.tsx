@@ -105,14 +105,14 @@ const Home: NextPage = () => {
             />
           </Grid>
 
-          <Grid item xs={12}>
-            <Button type="submit" variant="outlined" size="large" fullWidth>
-              Login
+          <Grid item xs={12} sx={{ mt: 2 }}>
+            <Button type="submit" variant="contained" size="large" fullWidth>
+              Log in
             </Button>
           </Grid>
 
           <Grid item xs={12}>
-            <Button variant="contained" size="large" fullWidth>
+            <Button variant="outlined" size="large" fullWidth>
               Sign up
             </Button>
           </Grid>

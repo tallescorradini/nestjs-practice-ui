@@ -5,6 +5,7 @@ import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
+import Alert from "@mui/material/Alert";
 import { useState } from "react";
 import { useRouter } from "next/router";
 
@@ -20,6 +21,9 @@ const Home: NextPage = () => {
   });
   const router = useRouter();
 
+  const [formSubmissionErrorMessage, setFormSubmissionErrorMessage] =
+    useState("");
+
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     const fieldName = event.target.name;
     const fieldValue = event.target.value;
@@ -27,6 +31,8 @@ const Home: NextPage = () => {
       ...state,
       [fieldName]: fieldValue,
     }));
+
+    if (formSubmissionErrorMessage) setFormSubmissionErrorMessage("");
   }
 
   async function handleFormSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -41,9 +47,11 @@ const Home: NextPage = () => {
         body: JSON.stringify(userCredentials),
       });
 
+      if (!response.ok)
+        throw new Error("You have entered an invalid email or password");
+
       const { accessToken } = await response.json();
 
-      if (!accessToken) return;
       document.cookie = `accessToken=${accessToken}; Expires=${new Date(
         9999,
         0,
@@ -51,10 +59,17 @@ const Home: NextPage = () => {
       ).toUTCString()}; Secure`;
 
       router.push("/profile");
-    } catch (error) {
+    } catch (error: any) {
       // TODO: handle login error
+      setFormSubmissionErrorMessage(error.message);
     }
   }
+
+  const FormSubmissionAlert = formSubmissionErrorMessage ? (
+    <Grid item xs={12}>
+      <Alert severity="error">{formSubmissionErrorMessage}</Alert>
+    </Grid>
+  ) : null;
 
   return (
     <Container maxWidth="xs">
@@ -104,6 +119,8 @@ const Home: NextPage = () => {
               fullWidth
             />
           </Grid>
+
+          {FormSubmissionAlert}
 
           <Grid item xs={12} sx={{ mt: 2 }}>
             <Button type="submit" variant="contained" size="large" fullWidth>

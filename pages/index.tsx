@@ -6,6 +6,7 @@ import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import { useState } from "react";
+import { useRouter } from "next/router";
 
 interface UserCredentials {
   email: string;
@@ -17,6 +18,7 @@ const Home: NextPage = () => {
     email: "",
     password: "",
   });
+  const router = useRouter();
 
   function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
     const fieldName = event.target.name;
@@ -27,9 +29,26 @@ const Home: NextPage = () => {
     }));
   }
 
-  function handleFormSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleFormSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    // submit form
+
+    try {
+      const response = await fetch("http://localhost:3001/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userCredentials),
+      });
+
+      const { accessToken } = await response.json();
+
+      if (!accessToken) return;
+      sessionStorage.setItem("accessToken", accessToken);
+      // router.push("/profile");
+    } catch (error) {
+      // TODO: handle login error
+    }
   }
 
   return (

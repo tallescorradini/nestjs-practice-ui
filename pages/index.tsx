@@ -5,8 +5,33 @@ import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
+import { useState } from "react";
+
+interface UserCredentials {
+  email: string;
+  password: string;
+}
 
 const Home: NextPage = () => {
+  const [userCredentials, setUserCredentials] = useState<UserCredentials>({
+    email: "",
+    password: "",
+  });
+
+  function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const fieldName = event.target.name;
+    const fieldValue = event.target.value;
+    setUserCredentials((state) => ({
+      ...state,
+      [fieldName]: fieldValue,
+    }));
+  }
+
+  function handleFormSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    // submit form
+  }
+
   return (
     <Container maxWidth="xs">
       <Head>
@@ -16,7 +41,12 @@ const Home: NextPage = () => {
       </Head>
 
       <Box height="100vh" display="flex" alignItems="center">
-        <Grid container spacing={2} component="form" autoComplete="off">
+        <Grid
+          onSubmit={handleFormSubmit}
+          component="form"
+          container
+          spacing={2}
+        >
           <Grid item xs={12}>
             <Box sx={{ typography: "subtitle1", textAlign: "center" }}>
               <h1>Simple User CRUD</h1>
@@ -25,24 +55,34 @@ const Home: NextPage = () => {
 
           <Grid item xs={12}>
             <TextField
+              onChange={handleInputChange}
+              value={userCredentials.email}
+              required={true}
               id="email"
-              label="Email"
+              name="email"
               type="email"
+              label="Email"
               variant="outlined"
               fullWidth
             />
           </Grid>
           <Grid item xs={12}>
             <TextField
-              label="Password"
+              onChange={handleInputChange}
+              value={userCredentials.password}
+              required={true}
+              autoComplete="true"
+              id="password"
+              name="password"
               type="password"
+              label="Password"
               variant="outlined"
               fullWidth
             />
           </Grid>
 
           <Grid item xs={12}>
-            <Button variant="outlined" size="large" fullWidth>
+            <Button type="submit" variant="outlined" size="large" fullWidth>
               Login
             </Button>
           </Grid>

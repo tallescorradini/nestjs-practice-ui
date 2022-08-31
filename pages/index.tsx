@@ -44,8 +44,13 @@ const Home: NextPage = () => {
       const { accessToken } = await response.json();
 
       if (!accessToken) return;
-      sessionStorage.setItem("accessToken", accessToken);
-      // router.push("/profile");
+      document.cookie = `accessToken=${accessToken}; Expires=${new Date(
+        9999,
+        0,
+        1
+      ).toUTCString()}; Secure`;
+
+      router.push("/profile");
     } catch (error) {
       // TODO: handle login error
     }
